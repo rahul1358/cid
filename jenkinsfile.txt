@@ -1,0 +1,45 @@
+pipeline {
+    agent any
+
+    tools {
+        // Install the Maven version configured as "M3" and add it to the path.
+        maven "M2_HOME"
+        jdk "JAVA_HOME"
+    }
+
+    stages {
+        stage('compile') {
+            steps {
+                // Get some code from a GitHub repository
+                git 'https://github.com/rahul1358/cid.git'
+
+                // Run Maven on a Unix agent.
+                sh "mvn compile"
+
+                // To run Maven on a Windows agent, use
+                // bat "mvn -Dmaven.test.failure.ignore=true clean package"
+            }
+        }
+         stage('codereview'){
+             steps{
+            sh "mvn pmd:pmd"
+                 
+             }
+        }
+        stage('unittest'){
+             steps{
+            sh "mvn test"
+                 
+             }
+        }
+         
+        
+        stage('package'){
+             steps{
+            sh "mvn package"
+                 
+             }
+        }
+
+    }
+}
